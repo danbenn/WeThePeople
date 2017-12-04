@@ -20,6 +20,7 @@ export default class MyReps extends Component {
   constructor(props) {
     super(props);
     this.renderRow = this.renderRow.bind(this);
+    this.resetAddress = this.resetAddress.bind(this);
     this.state = {
       voterAddress: 'None',
       viewStatement: 'your representatives',
@@ -57,14 +58,32 @@ export default class MyReps extends Component {
       );
     }
 
+    const Header = (props) => (
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>
+          {this.state.voterAddress}
+          </Text>
+          <Button title="Change address" onPress={this.resetAddress} />
+        </View>
+      </View>
+    );
+
     return (
       <ListView
         style={styles.backgroundView}
         dataSource={this.state.dataSource}
         renderRow={this.renderRow}
         enableEmptySections
+        renderHeader={() => <Header />}
       />
     );
+  }
+
+  resetAddress() {
+    this.setState({
+      voterAddress: 'None',
+    });
   }
 
   renderRow(rowData) {
@@ -146,28 +165,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#CFD8DC',
   },
+  header: {
+    flex: 1,
+    marginTop: 7,
+    backgroundColor: 'white',
+    alignSelf: "stretch",
+    marginLeft: 7,
+    marginRight: 7,
+  },
   container: {
     flex: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
     backgroundColor: '#CFD8DC',
   },
-  welcome: {
-    marginTop: 30,
-    fontSize: 30,
-    fontFamily: 'OpenSans-Light',
+  title: {
     textAlign: 'center',
-    margin: 10,
-    marginRight: 10,
-    marginLeft: 10,
+    fontFamily: 'OpenSans-Light',
+    fontSize: 25,
+    fontWeight: 'bold',
+    marginTop: 10,
+    backgroundColor: 'white',
+    color: 'black',
   },
-  instructions: {
-    fontSize: 20,
+  description: {
     textAlign: 'center',
     fontFamily: 'OpenSans-Light',
-    color: '#333333',
-    marginBottom: 5,
-    marginRight: 10,
-    marginLeft: 10,
+    fontSize: 20,
+    marginBottom: 0,
+    backgroundColor: 'white',
   },
 });
