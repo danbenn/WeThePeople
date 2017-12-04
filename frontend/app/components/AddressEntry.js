@@ -17,10 +17,13 @@ export default class AddressEntry extends Component {
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>
-            {"Where's home?"}
+            View {this.props.prevComponent.state.viewStatement}!
           </Text>
           <Text style={styles.description}>
-            View {this.props.prevComponent.state.viewStatement}!
+            {"Where's home?"}
+          </Text>
+          <Text style={styles.subdescription}>
+            Enter your home address
           </Text>
         </View>
         { GooglePlacesInput(this.props.prevComponent) }
@@ -38,7 +41,7 @@ const styles = StyleSheet.create({
   title: {
     textAlign: 'center',
     fontFamily: 'OpenSans-Light',
-    fontSize: 40,
+    fontSize: 25,
     fontWeight: 'bold',
     marginTop: 10,
     backgroundColor: 'white',
@@ -48,6 +51,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'OpenSans-Light',
     fontSize: 20,
+    marginBottom: 0,
+    backgroundColor: 'white',
+  },
+  subdescription: {
+    textAlign: 'center',
+    fontFamily: 'OpenSans-Light',
+    fontSize: 15,
     marginBottom: 15,
     backgroundColor: 'white',
   },
@@ -60,7 +70,7 @@ const styles = StyleSheet.create({
 
 const GooglePlacesInput = prevComponent => (
   <GooglePlacesAutocomplete
-    placeholder="Search"
+    placeholder="1234 Main Street, Anytown, State, 12345"
     minLength={2} // minimum length of text to search
     autoFocus={false}
     returnKeyType="search" // Can be left out for default return key https://facebook.github.io/react-native/docs/textinput.html#returnkeytype
@@ -78,7 +88,7 @@ const GooglePlacesInput = prevComponent => (
         // available options: https://developers.google.com/places/web-service/autocomplete
         key: 'AIzaSyCB6aXTmzrnPaGK4SO9lX2_p12Ve5iE8pY',
         language: 'en', // language of the results
-        types: 'geocode', // default: 'geocode'
+        types: 'address', // default: 'geocode'
       }}
 
     styles={{
