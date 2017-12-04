@@ -21,7 +21,7 @@ export default class FavoriteButton extends Component {
   }
 
   render() {
-    const tintColor = this.state.isSelected ? '#489AF0' : 'gray';
+    const tintColor = 'white'; // this.state.isSelected ? '#489AF0' : 'gray';
     return (
       <TouchableHighlight
         style={styles.button}

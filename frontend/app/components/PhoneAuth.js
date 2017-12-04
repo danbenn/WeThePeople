@@ -116,7 +116,7 @@ export default class PhoneAuth extends Component {
           setTimeout(() => {
             Alert.alert('Success!', 'You have successfully verified your phone number');
           }, 100);
-          // this.navigateToBubblePicker();
+          this.navigateToBubblePicker();
           this.props.navigation.navigate('TabView');
         }
       } catch (err) {

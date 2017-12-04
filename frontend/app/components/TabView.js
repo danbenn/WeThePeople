@@ -17,11 +17,11 @@ export default class TabView extends PureComponent {
   state = {
     index: 1,
     routes: [
-      { key: '1', image: images.profile },
-      { key: '2', image: images.bolt },
+      // { key: '1', image: images.profile },
+      // { key: '2', image: images.bolt },
       { key: '3', image: images.newspaper },
       { key: '4', image: images.location },
-      { key: '5', image: images.notification },
+      // { key: '5', image: images.notification },
     ],
   };
 
