@@ -15,7 +15,7 @@ import images from '../assets/images';
 
 export default class TabView extends PureComponent {
   state = {
-    index: 1,
+    index: 0,
     routes: [
       // { key: '1', image: images.profile },
       // { key: '2', image: images.bolt },
