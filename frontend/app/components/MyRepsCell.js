@@ -7,11 +7,13 @@ import {
   ImageBackground,
   ListView,
   Dimensions,
+  TouchableHighlight,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 import CivicAPI from './CivicAPI';
 
-export default class MyReps extends Component {
+export default class MyRepsCell extends Component {
   componentWillMount() {
     const person = this.props.person;
 
@@ -54,42 +56,54 @@ export default class MyReps extends Component {
   render() {
     const imageBorderRadius = ((Dimensions.get('window').width * 0.4) - 7) / 2;
     return (
-      <View style={styles.backgroundView}>
-        <ImageBackground
-          borderRadius={imageBorderRadius}
-          style={styles.profilePic}
-          source={{ uri: this.state.imageUrl }}
-        >
-          <View style={styles.initialsView}>
-            <Text style={[styles.initialsText,
-              { color: this.state.initialsColor }]}
+      <TouchableHighlight
+        underlayColor="white"
+        onPress={() => this.props.personWasTapped({
+          person: this.props.person,
+          fromBill: false,
+        })}
+      >
+        <View style={styles.backgroundView}>
+          <ImageBackground
+            borderRadius={imageBorderRadius}
+            style={styles.profilePic}
+            source={{ uri: this.state.imageUrl }}
+          >
+            <View style={styles.initialsView}>
+              <Text style={[styles.initialsText,
+                { color: this.state.initialsColor }]}
+              >
+                {this.state.initials}
+              </Text>
+            </View>
+          </ImageBackground>
+          <View style={styles.descriptionView}>
+            <Text
+              style={styles.name}
             >
-              {this.state.initials}
+              <Text>
+                {this.state.name}
+              </Text>
+              <Text style={styles.party}>
+                {this.state.party}
+              </Text>
+            </Text>
+            <Text
+              style={styles.position}
+              adjustsFontSizeToFit
+            >
+              {this.state.position}
             </Text>
           </View>
-        </ImageBackground>
-        <View style={styles.descriptionView}>
-          <Text
-            style={styles.name}
-          >
-            <Text>
-              {this.state.name}
-            </Text>
-            <Text style={styles.party}>
-              {this.state.party}
-            </Text>
-          </Text>
-          <Text
-            style={styles.position}
-            adjustsFontSizeToFit
-          >
-            {this.state.position}
-          </Text>
         </View>
-      </View>
+      </TouchableHighlight>
     );
   }
 }
+
+MyRepsCell.propTypes = {
+  personWasTapped: PropTypes.func.isRequired,
+};
 
 const styles = StyleSheet.create({
   backgroundView: {

@@ -11,6 +11,7 @@ import {
   ImageBackground,
 } from 'react-native';
 import CongressAPI from './CongressAPI';
+import call from 'react-native-phone-call';
 
 export default class ProfilePage extends Component {
   static navigationOptions = {
@@ -29,27 +30,75 @@ export default class ProfilePage extends Component {
       title: '',
       bio: '',
     };
-    CongressAPI.getLegislator(params.legId)
+
+    // If this is being clicked from the newsfeed/bill detail
+    // there is further fetching that needs to be done
+    // Otherwise, we are expecting this to be navigated to from the
+    // MyReps page
+    if (params.fromBill) {
+      CongressAPI.getLegislator(params.legId)
       .then((response) => {
         this.setState({
-          response,
-          name: `${response.first_name} ${response.last_name} `,
+          firstName: response.first_name,
+          lastName: response.last_name,
+          name: `${response.first_name} ${response.last_name}`,
           imageUrl: `https://graph.facebook.com/${response.facebook_account}/picture?type=large`,
           party: response.current_party,
-          state: response.roles[0].state,
           title: response.roles[0].title,
+          fromBill: params.fromBill,
         });
       }).then(() => {
         this.fetchBio();
       });
+    }
+    else {
+      var person = params.person;
+
+      var channels = person.channels;
+      var imageUrl = 'https://media.giphy.com/media/KKlNU6e4dWCGY/source.gif';
+      for (const i in channels) {
+        const channel = channels[i];
+        if (channel.type == 'Facebook') {
+          imageUrl = `https://graph.facebook.com/${channel.id}/picture?type=large`;
+          break;
+        }
+      }
+
+      var nameArray = person.name.split(" ");
+      var lastName = nameArray[nameArray.length - 1];
+      var firstName = nameArray[0];
+
+      var addressDict = person.address[0];
+      var addressArray = [];
+      var line1 = addressDict['line1'];
+      for (var key in addressDict) {
+          if (addressDict.hasOwnProperty(key) && key != 'line1') {
+              addressArray.push(addressDict[key]);
+          }
+      }
+      var line2 = addressArray.join(", ");
+      var address = [line1, line2].join("\n");
+
+      this.state = {
+        name: person.name,
+        firstName: firstName,
+        lastName: lastName,
+        imageUrl: imageUrl,
+        party: person.party,
+        title: person.position,
+        bio: '',
+        address: address,
+        phone: person.phones[0],
+        fromBill: params.fromBill,
+      };
+      this.fetchBio();
+    }
   }
 
   fetchBio() {
-    first_name = this.state.response.first_name;
-    last_name = this.state.response.last_name;
     url = 'https://en.wikipedia.org/w/api.php?format=json&action=query' +
            '&prop=extracts&exintro=&explaintext=&titles=' +
-           `${first_name}%20${last_name}`;
+           `${this.state.firstName}%20${this.state.lastName}`;
     return fetch(url)
       .then(response => response.json())
       .then((response) => {
@@ -102,6 +151,46 @@ export default class ProfilePage extends Component {
     </View>
   )
 
+  contactInfo = (fromBill) => {
+    if (fromBill == false) {
+      return (
+        <View style={styles.contactContainer}>
+          <Text style={styles.contactInfoHeader}>
+            Contact Info
+          </Text>
+          <Text style={styles.contactInfoTitle}>
+            Phone Number
+          </Text>
+          <Button
+            style={styles.contactInfo}
+            title={this.state.phone}
+            onPress={() => {
+              var phoneNumber = this.state.phone;
+              phoneNumber = phoneNumber.replace('-', '');
+              phoneNumber = phoneNumber.replace('(', '');
+              phoneNumber = phoneNumber.replace(')', '');
+              phoneNumber = phoneNumber.replace(' ', '');
+
+              const args = {
+                number: phoneNumber,
+                prompt: true // Determines if the user should be prompt prior to the call
+              };
+
+              call(args).catch(console.error);
+            }}
+          />
+          <Text style={styles.contactInfoTitle}>
+            Address
+          </Text>
+          <Text style={styles.contactInfo}>
+            {this.state.address}
+          </Text>
+        </View>
+      );
+    }
+    return (<Text></Text>);
+  }
+
   render() {
     return (
       <ScrollView
@@ -122,6 +211,7 @@ export default class ProfilePage extends Component {
           <Text style={styles.title}>
             {this.state.title}
           </Text>
+          {this.contactInfo(this.state.fromBill)}
           <Text style={styles.bio}>
             {this.state.bio}
           </Text>
@@ -224,6 +314,33 @@ let styles = StyleSheet.create({
     margin: 15,
     fontFamily: 'OpenSans-Regular',
     fontSize: 17,
+  },
+  contactContainer: {
+    borderWidth: 2,
+    borderColor: 'gray',
+    marginLeft: 15,
+    marginRight: 15,
+  },
+  contactInfoHeader: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 22,
+    textAlign: 'center',
+    color: 'black',
+    marginLeft: 15,
+  },
+  contactInfoTitle: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 18,
+    textAlign: 'center',
+    color: 'black',
+    marginLeft: 15,
+  },
+  contactInfo: {
+    fontFamily: 'OpenSans-Regular',
+    fontSize: 15,
+    textAlign: 'center',
+    color: 'gray',
+    marginLeft: 15,
   },
   gradientView: {
     flex: -1,

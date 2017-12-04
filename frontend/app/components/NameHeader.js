@@ -43,14 +43,20 @@ export default class NameHeader extends Component {
       <View style={[styles.header, this.props.style]}>
         <ProfilePic
           imageUrl={this.state.imageUrl}
-          wasTapped={() => this.props.wasTapped(this.state.sponsorId)}
+          wasTapped={() => this.props.wasTapped({
+            legId: this.state.sponsorId,
+            fromBill: true,
+          })}
         />
         <View style={styles.nameView}>
           <View>
             <TouchableHighlight
               style={styles.sponsorWrapper}
               underlayColor="white"
-              onPress={() => this.props.wasTapped(this.state.sponsorId)}
+              onPress={() => this.props.wasTapped({
+                legId: this.state.sponsorId,
+                fromBill: true,
+              })}
             >
               <Text>
                 <Text style={styles.sponsor}>

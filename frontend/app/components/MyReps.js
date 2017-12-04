@@ -8,6 +8,7 @@ import {
   ListView,
   AsyncStorage,
 } from 'react-native';
+import PropTypes from 'prop-types';
 
 import CivicAPI from './CivicAPI';
 import MyRepsCell from './MyRepsCell';
@@ -18,6 +19,7 @@ import { NavigationActions } from 'react-navigation';
 export default class MyReps extends Component {
   constructor(props) {
     super(props);
+    this.renderRow = this.renderRow.bind(this);
     this.state = {
       voterAddress: 'None',
       viewStatement: 'your representatives',
@@ -67,9 +69,12 @@ export default class MyReps extends Component {
 
   renderRow(rowData) {
     return (
-      <MyRepsCell
-        person={rowData}
-      />
+      <View>
+        <MyRepsCell
+          person={rowData}
+          personWasTapped={this.props.personWasTapped}
+        />
+      </View>
     );
   }
 
@@ -131,6 +136,10 @@ export default class MyReps extends Component {
     this.renderRow = this.renderRow.bind(this);
   }
 }
+
+MyReps.propTypes = {
+  personWasTapped: PropTypes.func.isRequired,
+};
 
 const styles = StyleSheet.create({
   backgroundView: {

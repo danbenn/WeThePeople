@@ -1,0 +1,29 @@
+{
+    "name": "Debbie Stabenow",
+    "address":[{
+        "line1": "731 Hart Senate Office Building",
+        "city": "Washington",
+        "state": "DC",
+        "zip": "20510"
+    }],
+    "party": "Democratic",
+    "phones": [
+        "(202) 224-4822"
+    ],
+    "urls": [
+        "http://www.stabenow.senate.gov/"
+    ],
+    "photoUrl": "http://bioguide.congress.gov/bioguide/photo/S/S000770.jpg",
+    "channels":[
+        {
+            "type": "Facebook",
+            "id": "stabenow"
+        },{
+            "type": "Twitter",
+            "id": "stabenow"
+        },{
+            "type": "YouTube",
+            "id": "SenatorStabenow"
+    }],
+    "position": "United States Senator"
+}

@@ -39,9 +39,9 @@ export default class TabView extends PureComponent {
     });
   }
 
-  personWasTapped = (legId) => {
+  personWasTapped = (args) => {
     const { navigate } = this.props.navigation;
-    navigate('ProfilePage', { legId });
+    navigate('ProfilePage', args);
   }
 
   renderIcon = ({ route }) => (
@@ -82,7 +82,9 @@ export default class TabView extends PureComponent {
         );
       case '4':
         return (
-          <MyReps />
+          <MyReps
+            personWasTapped={this.personWasTapped}
+          />
         );
       case '5':
         return (
