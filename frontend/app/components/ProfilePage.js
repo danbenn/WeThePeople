@@ -15,7 +15,9 @@ import call from 'react-native-phone-call';
 
 export default class ProfilePage extends Component {
   static navigationOptions = {
-    headerStyle: { backgroundColor: 'white' },
+    headerStyle: {
+      backgroundColor: 'white'
+    },
     gesturesEnabled: true,
   };
 
@@ -95,45 +97,85 @@ export default class ProfilePage extends Component {
     }
   }
 
-  fetchBio() {
+  fetchBio = () => {
     url = 'https://en.wikipedia.org/w/api.php?format=json&action=query' +
            '&prop=extracts&exintro=&explaintext=&titles=' +
            `${this.state.firstName}%20${this.state.lastName}`;
-    return fetch(url)
-      .then(response => response.json())
-      .then((response) => {
-        const pages = response.query.pages;
-        this.setState({ bio: 'not set' });
-        if (!response.query.pages.hasOwnProperty('-1')) {
-          // found a matching Wikipedia page
-          for (const key in pages) {
-            if (pages.hasOwnProperty(key)) {
-              const { extract } = pages[key];
+    alternateUrl = url + '%20(politician)';
+    bioMessage = 'No bio results, please report to developers';
+
+    fetch(url).then(response => response.json()).then((urlResponse) => {
+      // Check if search returned any results
+      if (this.wikiSearchHasResults(urlResponse)) {
+        extract = this.getExtractFromWikiResponse(urlResponse);
+        if (extract == 'multiple') {
+          // Try alternateUrl
+          fetch(alternateUrl).then(response => response.json()).then((alternateUrlResponse) => {
+            if (this.wikiSearchHasResults(alternateUrlResponse)) {
+              extract = this.getExtractFromWikiResponse(alternateUrlResponse);
+
+              if (extract == 'multiple') {
+                bioMessage = 'Multiple Bio results after alternate attempt, please report to developers';
+              }
+              else {
+                if (extract != "") {
+                  bioMessage = extract;
+                }
+              }
               this.setState({
-                bio: this.shortenBio(extract),
-              });
-            } else {
-              this.setState({
-                bio: 'Bio currently unavailable',
+                bio: bioMessage
               });
             }
+          });
+        }
+        else {
+          if (extract != "") {
+            bioMessage = extract;
           }
         }
-        return response;
-      }).catch((error) => {
-        this.setState({ bio: 'Bio currently unavailable' });
-        console.log(error);
+      }
+      this.setState({
+        bio: bioMessage
       });
+    });
+    this.setState({
+      bio: bioMessage
+    });
+  }
+
+  wikiSearchHasResults = (response) => {
+    return !response.query.pages.hasOwnProperty('-1');
+  }
+
+  getExtractFromWikiResponse = (response) => {
+    const pages = response.query.pages;
+
+    returnExtract = 'Error fetching bio, please report to developers';
+
+    // only one key in "pages"
+    for (const key in pages) {
+      if (pages.hasOwnProperty(key)) {
+        // grab extract from pages dict
+        const { extract } = pages[key];
+
+        if (extract.includes('may refer to')) {
+          returnExtract = 'multiple';
+          break;
+        }
+
+        returnExtract = this.shortenBio(extract)
+        break;
+      }
+    }
+
+    return returnExtract;
   }
 
   shortenBio = (bio) => {
     let shortBio = bio;
-    if (bio.includes(')')) {
+    if (bio.includes('born')) {
       // Removes birthday
       shortBio = bio.replace(/ *\([^)]*\) */g, ' ');
-    }
-    if (bio.includes('may refer to')) {
-      shortBio = 'Bio currently unavailable';
     }
     return shortBio;
   }
