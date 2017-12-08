@@ -13,6 +13,7 @@ import PhoneAuth from './app/components/PhoneAuth';
 import BillDetail from './app/components/BillDetail';
 import ProfilePage from './app/components/ProfilePage';
 import TabView from './app/components/TabView';
+import PrivacyPolicy from './app/components/PrivacyPolicy';
 
 export default class App extends Component {
   constructor(props) {
@@ -54,10 +55,12 @@ const FirstTimeUserNavigator = StackNavigator({
   TabView: { screen: TabView, navigationOptions: { header: null } },
   BillDetail: { screen: BillDetail },
   ProfilePage: { screen: ProfilePage },
+  PrivacyPolicy: { screen: PrivacyPolicy },
 });
 
 const LoggedInUserNavigator = StackNavigator({
   TabView: { screen: TabView, navigationOptions: { header: null } },
   BillDetail: { screen: BillDetail },
   ProfilePage: { screen: ProfilePage },
+  PrivacyPolicy: { screen: PrivacyPolicy },
 });

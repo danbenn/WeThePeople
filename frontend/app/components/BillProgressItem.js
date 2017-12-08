@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     borderWidth: 1.5,
     resizeMode: 'contain',
-    backgroundColor: 'blue',
+    // backgroundColor: 'blue',
   },
   progressItemText: {
     // backgroundColor: 'purple',

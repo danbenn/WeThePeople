@@ -5,6 +5,7 @@ import {
   View,
   ScrollView,
   Dimensions,
+  Alert,
 } from 'react-native';
 import PropTypes from 'prop-types';
 import CongressAPI from './CongressAPI';
@@ -19,7 +20,8 @@ export default class BillDetail extends Component {
     headerStyle: { backgroundColor: 'white' },
   };
 
-  componentWillMount() {
+  constructor(props) {
+    super(props);
     const { params } = this.props.navigation.state;
     const { sponsor } = params.bill;
     let imageUrl = '';
@@ -36,8 +38,13 @@ export default class BillDetail extends Component {
       imageUrl,
       legId: '',
       personWasTapped: params.personWasTapped,
+      committees: ['hello'],
     };
+  }
 
+  componentWillMount() {
+    this.setCommittees();
+    const { params } = this.props.navigation.state;
     const legislatorId = params.bill.sponsor.id;
     CongressAPI.getLegislator(legislatorId)
       .then((response) => {
@@ -49,10 +56,26 @@ export default class BillDetail extends Component {
       });
   }
 
-  renderMachineSummary() {
-    let textToShowUser = this.state.bill.machine_summary.join('\n\n');
-    if (textToShowUser === '') {
-      textToShowUser = 'Currently unavailable';
+  setCommittees = () => {
+    let committeeNames = new Array(0);
+    if (Array.isArray(this.state.bill.senate_committees)) {
+      const senate = this.state.bill.senate_committees.map(committeeObj => committeeObj.committee);
+      committeeNames += senate;
+    }
+    if (Array.isArray(this.state.bill.house_committees)) {
+      this.state.bill.house_committees.forEach((obj) => {
+        committeeNames.push(obj.committee);
+      });
+    }
+    this.setState({ committees: committeeNames });
+  }
+
+  renderSummary = () => {
+    const humanSummary = this.state.bill.human_summary.join('\n\n');
+    const machineSummary = this.state.bill.machine_summary.join('\n\n');
+    let textToShowUser = humanSummary;
+    if (humanSummary === '') {
+      textToShowUser = machineSummary;
     }
     return (
       <Text style={styles.summary}>
@@ -61,30 +84,26 @@ export default class BillDetail extends Component {
     );
   }
 
-  renderHumanSummary() {
-    const textToShowUser = this.state.bill.human_summary.join('\n\n');
-    if (textToShowUser !== '') {
-      return (
-        <View>
-          <Text style={styles.summaryHeader}>
-            {'Human Summary'}
-          </Text>
-          <Text style={styles.summary}>
-            {textToShowUser}
-          </Text>
-        </View>
+  renderCommittees = () => (
+    <View>
+      <Text style={styles.summaryHeader}>
+        {'Committees'}
+      </Text>
+      {this.state.committees.map(committee => (
+        <Text style={styles.summaryHeader}>
+          {committee}
+        </Text>
+      ))}
+    </View>
 
-      );
-    }
-    return null;
-  }
+  )
 
   render() {
     const details = this.state.bill.title;
     const subject = this.state.bill.topic;
     const date = this.state.bill.introduction_date;
     const relativeDate = this.state.bill.last_updated;
-    const sponsor = this.state.sponsor;
+    const { sponsor } = this.state;
     return (
       <ScrollView
         style={styles.backgroundView}
@@ -99,25 +118,13 @@ export default class BillDetail extends Component {
             {details}
           </Text>
           <BillProgress style={styles.progressView} />
-
-          {this.renderHumanSummary()}
           <Text style={styles.summaryHeader}>
-            {'Auto-Generated Summary'}
+            {'Summary'}
           </Text>
-          {this.renderMachineSummary()}
-          <CustomButton
-            onPress={() => {}}
-            text="Read Full Text"
-          />
+          {this.renderSummary()}
+          {this.renderCommittees()}
         </View>
         <View style={styles.divider} />
-        <View style={styles.reactionView}>
-          <Emoji image={images.smileyEmoji} />
-          <Emoji image={images.grinEmoji} />
-          <Emoji image={images.uhohEmoji} />
-          <Emoji image={images.sadEmoji} />
-          <Emoji image={images.angryEmoji} />
-        </View>
       </ScrollView>
     );
   }
@@ -146,20 +153,6 @@ let styles = StyleSheet.create({
   header: {
     marginTop: 7,
   },
-  subject: {
-    backgroundColor: 'white',
-    // backgroundColor: 'purple',
-    height: 15,
-    fontSize: 13,
-    fontFamily: 'OpenSans-Light',
-    marginLeft: 15,
-    marginTop: 14,
-  },
-  subjectWrapper: {
-    backgroundColor: 'white',
-    // backgroundColor: 'red',
-    marginTop: 7,
-  },
   title: {
     flex: -1,
     marginTop: 15,
@@ -177,33 +170,6 @@ let styles = StyleSheet.create({
   progressView: {
     marginBottom: 100,
   },
-  date: {
-    marginTop: 5,
-    marginLeft: 15,
-    fontSize: 14,
-    color: 'grey',
-    // backgroundColor: 'green',
-  },
-  nameView: {
-    flexDirection: 'column',
-    // backgroundColor: 'yellow',
-  },
-  sponsor: {
-    marginTop: 15,
-    marginLeft: 15,
-    fontSize: 18,
-    fontFamily: 'avenir-medium',
-    // backgroundColor: 'green',
-  },
-  profilePic: {
-    height: 60,
-    width: 60,
-    borderRadius: 30,
-    marginTop: 15,
-    marginLeft: 15,
-    // backgroundColor: 'blue',
-    borderWidth: 0.5,
-  },
   contentWrapper: {
     flex: 1,
     alignItems: 'center',
@@ -214,7 +180,6 @@ let styles = StyleSheet.create({
     fontFamily: 'OpenSans-Regular',
     fontSize: 17,
     textAlign: 'center',
-    color: 'gray',
     marginTop: 7,
   },
   summary: {

@@ -42,9 +42,14 @@ export default class Onboarding extends Component {
     ],
   };
 
-  continueWasTapped() {
+  continueWasTapped = () => {
     const { navigate } = this.props.navigation;
     navigate('PhoneAuth');
+  }
+
+  privacyPolicyWasTapped = () => {
+    const { navigate } = this.props.navigation;
+    navigate('PrivacyPolicy');
   }
 
   render() {
@@ -99,7 +104,7 @@ export default class Onboarding extends Component {
           style={styles.privacyPolicy}
           underlayColor="white"
           activeOpacity={0.5}
-          onPress={() => {}}
+          onPress={this.privacyPolicyWasTapped}
         >
           <View>
             <Text style={styles.privacyPolicyText}>

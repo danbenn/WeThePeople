@@ -16,7 +16,7 @@ import call from 'react-native-phone-call';
 export default class ProfilePage extends Component {
   static navigationOptions = {
     headerStyle: {
-      backgroundColor: 'white'
+      backgroundColor: 'white',
     },
     gesturesEnabled: true,
   };
@@ -39,25 +39,24 @@ export default class ProfilePage extends Component {
     // MyReps page
     if (params.fromBill) {
       CongressAPI.getLegislator(params.legId)
-      .then((response) => {
-        this.setState({
-          firstName: response.first_name,
-          lastName: response.last_name,
-          name: `${response.first_name} ${response.last_name}`,
-          imageUrl: `https://graph.facebook.com/${response.facebook_account}/picture?type=large`,
-          party: response.current_party,
-          title: response.roles[0].title,
-          fromBill: params.fromBill,
+        .then((response) => {
+          this.setState({
+            firstName: response.first_name,
+            lastName: response.last_name,
+            name: `${response.first_name} ${response.last_name}`,
+            imageUrl: `https://graph.facebook.com/${response.facebook_account}/picture?type=large`,
+            party: response.current_party,
+            title: response.roles[0].title,
+            fromBill: params.fromBill,
+          });
+        }).then(() => {
+          this.fetchBio();
         });
-      }).then(() => {
-        this.fetchBio();
-      });
-    }
-    else {
-      var person = params.person;
+    } else {
+      const person = params.person;
 
-      var channels = person.channels;
-      var imageUrl = 'https://media.giphy.com/media/KKlNU6e4dWCGY/source.gif';
+      const channels = person.channels;
+      let imageUrl = 'https://media.giphy.com/media/KKlNU6e4dWCGY/source.gif';
       for (const i in channels) {
         const channel = channels[i];
         if (channel.type == 'Facebook') {
@@ -66,30 +65,30 @@ export default class ProfilePage extends Component {
         }
       }
 
-      var nameArray = person.name.split(" ");
-      var lastName = nameArray[nameArray.length - 1];
-      var firstName = nameArray[0];
+      const nameArray = person.name.split(' ');
+      const lastName = nameArray[nameArray.length - 1];
+      const firstName = nameArray[0];
 
-      var addressDict = person.address[0];
-      var addressArray = [];
-      var line1 = addressDict['line1'];
-      for (var key in addressDict) {
-          if (addressDict.hasOwnProperty(key) && key != 'line1') {
-              addressArray.push(addressDict[key]);
-          }
+      const addressDict = person.address[0];
+      const addressArray = [];
+      const line1 = addressDict.line1;
+      for (const key in addressDict) {
+        if (addressDict.hasOwnProperty(key) && key != 'line1') {
+          addressArray.push(addressDict[key]);
+        }
       }
-      var line2 = addressArray.join(", ");
-      var address = [line1, line2].join("\n");
+      const line2 = addressArray.join(', ');
+      const address = [line1, line2].join('\n');
 
       this.state = {
         name: person.name,
-        firstName: firstName,
-        lastName: lastName,
-        imageUrl: imageUrl,
+        firstName,
+        lastName,
+        imageUrl,
         party: person.party,
         title: person.position,
         bio: '',
-        address: address,
+        address,
         phone: person.phones[0],
         fromBill: params.fromBill,
       };
@@ -101,8 +100,8 @@ export default class ProfilePage extends Component {
     url = 'https://en.wikipedia.org/w/api.php?format=json&action=query' +
            '&prop=extracts&exintro=&explaintext=&titles=' +
            `${this.state.firstName}%20${this.state.lastName}`;
-    alternateUrl = url + '%20(politician)';
-    bioMessage = 'No bio results, please report to developers';
+    alternateUrl = `${url}%20(politician)`;
+    bioMessage = 'Bio currently unavailable';
 
     fetch(url).then(response => response.json()).then((urlResponse) => {
       // Check if search returned any results
@@ -116,36 +115,28 @@ export default class ProfilePage extends Component {
 
               if (extract == 'multiple') {
                 bioMessage = 'Multiple Bio results after alternate attempt, please report to developers';
-              }
-              else {
-                if (extract != "") {
-                  bioMessage = extract;
-                }
+              } else if (extract != '') {
+                bioMessage = extract;
               }
               this.setState({
-                bio: bioMessage
+                bio: bioMessage,
               });
             }
           });
-        }
-        else {
-          if (extract != "") {
-            bioMessage = extract;
-          }
+        } else if (extract != '') {
+          bioMessage = extract;
         }
       }
       this.setState({
-        bio: bioMessage
+        bio: bioMessage,
       });
     });
     this.setState({
-      bio: bioMessage
+      bio: bioMessage,
     });
   }
 
-  wikiSearchHasResults = (response) => {
-    return !response.query.pages.hasOwnProperty('-1');
-  }
+  wikiSearchHasResults = response => !response.query.pages.hasOwnProperty('-1')
 
   getExtractFromWikiResponse = (response) => {
     const pages = response.query.pages;
@@ -163,7 +154,7 @@ export default class ProfilePage extends Component {
           break;
         }
 
-        returnExtract = this.shortenBio(extract)
+        returnExtract = this.shortenBio(extract);
         break;
       }
     }
@@ -207,7 +198,7 @@ export default class ProfilePage extends Component {
             style={styles.contactInfo}
             title={this.state.phone}
             onPress={() => {
-              var phoneNumber = this.state.phone;
+              let phoneNumber = this.state.phone;
               phoneNumber = phoneNumber.replace('-', '');
               phoneNumber = phoneNumber.replace('(', '');
               phoneNumber = phoneNumber.replace(')', '');
@@ -215,7 +206,7 @@ export default class ProfilePage extends Component {
 
               const args = {
                 number: phoneNumber,
-                prompt: true // Determines if the user should be prompt prior to the call
+                prompt: true, // Determines if the user should be prompt prior to the call
               };
 
               call(args).catch(console.error);
@@ -230,7 +221,7 @@ export default class ProfilePage extends Component {
         </View>
       );
     }
-    return (<Text></Text>);
+    return (<Text />);
   }
 
   render() {

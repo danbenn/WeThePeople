@@ -4,6 +4,7 @@ import React, { PureComponent } from 'react';
 import {
   StyleSheet,
   Image,
+  StatusBar,
 } from 'react-native';
 import { TabViewAnimated, TabBar } from 'react-native-tab-view';
 import PropTypes from 'prop-types';
@@ -121,7 +122,7 @@ TabView.propTypes = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // marginTop: 20,
+    marginTop: 20,
   },
   tabbar: {
     backgroundColor: 'white',

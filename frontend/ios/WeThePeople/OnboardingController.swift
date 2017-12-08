@@ -61,9 +61,10 @@ class OnboardingController: UIViewController {
               let ref = Database.database().reference()
               ref.child("users/\(userID)/subtopics").setValue(subtopics)
               present(newsfeed, animated: true, completion: nil)
-            } else {
-              assert(false)
             }
+//            else {
+//              assert(false)
+//            }
             break
         }
     }
