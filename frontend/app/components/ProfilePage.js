@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
   ImageBackground,
+  Linking,
 } from 'react-native';
 import CongressAPI from './CongressAPI';
 import call from 'react-native-phone-call';
@@ -244,9 +245,13 @@ export default class ProfilePage extends Component {
         <Text style={styles.contactInfoTitle}>
           Email
         </Text>
-        <Text style={styles.contactInfo}>
-          {this.state.email}
-        </Text>
+        <Button
+          style={styles.contactInfo}
+          title={this.state.email}
+          onPress={() => {
+            Linking.openURL("mailto:" + this.state.email);
+          }}
+        />
       </View>
     );
   }
