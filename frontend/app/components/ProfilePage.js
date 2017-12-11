@@ -65,10 +65,12 @@ export default class ProfilePage extends Component {
         }
       }
 
+      // Get Name
       const nameArray = person.name.split(' ');
       const lastName = nameArray[nameArray.length - 1];
       const firstName = nameArray[0];
 
+      // Get Address
       const addressDict = person.address[0];
       const addressArray = [];
       const line1 = addressDict.line1;
@@ -80,6 +82,12 @@ export default class ProfilePage extends Component {
       const line2 = addressArray.join(', ');
       const address = [line1, line2].join('\n');
 
+      // Check for email
+      email = 'none';
+      if (person.hasOwnProperty('emails')) {
+        email = person.emails[0];
+      }
+
       this.state = {
         name: person.name,
         firstName,
@@ -89,6 +97,7 @@ export default class ProfilePage extends Component {
         title: person.position,
         bio: '',
         address,
+        email,
         phone: person.phones[0],
         fromBill: params.fromBill,
       };
@@ -212,6 +221,7 @@ export default class ProfilePage extends Component {
               call(args).catch(console.error);
             }}
           />
+          {this.getEmail()}
           <Text style={styles.contactInfoTitle}>
             Address
           </Text>
@@ -221,7 +231,24 @@ export default class ProfilePage extends Component {
         </View>
       );
     }
-    return (<Text />);
+    return;
+  }
+
+  getEmail = () => {
+    if (this.state.email == 'none') {
+      return;
+    }
+
+    return (
+      <View>
+        <Text style={styles.contactInfoTitle}>
+          Email
+        </Text>
+        <Text style={styles.contactInfo}>
+          {this.state.email}
+        </Text>
+      </View>
+    );
   }
 
   render() {
