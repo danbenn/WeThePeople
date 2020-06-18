@@ -1,7 +1,5 @@
 # WeThePeople
 
-Empowering people to stay informed on legislation at the local and national level.
-
 Helping people find and understand state-level bills is incredibly hard.
 
 First, not every bill is interesting to every person. A bill on education might be interesting to teachers, but not the general population.
